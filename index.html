@@ -115,8 +115,17 @@ summary{cursor:pointer;font:600 13px Inter;color:#7a2416;padding:6px 0}
 .f4 .btn{background:#f7d27a;color:#3a1608}.f4 .btn.ghost{background:transparent;color:#f7d27a;border-color:#f7d27a}
 .f4 label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 #copied{display:block;width:100%;font-size:13px;color:#f7d27a;min-height:18px;margin-top:6px}
-footer{background:#0e0a1e;color:#a99a86;text-align:center;font-size:12px;padding:20px 6vw 26px}
-footer a{color:#f7d27a}
+footer.site{background:#0e0a1e;color:#b9aa94;padding:46px 6vw 22px;font-size:14px;line-height:1.6;border-top:3px solid #c9902f}
+.fgrid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.6fr 1fr 1fr 1.2fr;gap:32px}
+.fname{font-family:'Yatra One',cursive;font-size:24px;color:#f7d27a;text-decoration:none}
+.fbrand p{margin-top:8px;max-width:300px}
+footer.site h4{font:600 11px Inter;letter-spacing:.2em;text-transform:uppercase;color:#e9b44c;margin-bottom:10px}
+footer.site .fgrid a:not(.fname){display:block;color:#f3e6cf;text-decoration:none;padding:3px 0}
+footer.site .fgrid a:hover{color:#f7d27a}
+footer.site .fgrid p{font-size:13px}
+.fbar2{max-width:1200px;margin:34px auto 0;padding-top:16px;border-top:1px solid rgba(233,180,76,.25);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px}
+.fbar2 b{color:#f7d27a;font-weight:600}.fbar2 span[aria-label]{color:#e2552a}
+@media (max-width:860px){.fgrid{grid-template-columns:1fr 1fr}.fbrand{grid-column:1/-1}.fbar2{flex-direction:column;align-items:flex-start}}
 #zoom{position:fixed;inset:0;z-index:60;background:rgba(20,12,6,.93);display:flex;align-items:center;justify-content:center;padding:3vw}
 #zoom[hidden]{display:none}#zimg{max-width:100%;max-height:100%}
 #zclose{position:absolute;top:16px;right:16px;width:46px;height:46px;border-radius:50%;border:2px solid #f7d27a;background:transparent;color:#f7d27a;font-size:18px;cursor:pointer}
@@ -239,7 +248,15 @@ footer a{color:#f7d27a}
     </div>
   </section>
 </main>
-<footer><a href="privacy.html">Privacy policy</a> · No cookies, no tracking · Paintings in the Odisha Pattachitra tradition · Places are described as local tradition holds them</footer>
+<footer class="site">
+  <div class="fgrid">
+    <div class="fbrand"><a class="fname" href="#top">The Story of Light</a><p>The story of Diwali, told in Odisha Pattachitra paintings, for everyone, everywhere.</p></div>
+    <div><h4>Explore</h4><a href="#story">The story</a><a href="#places">The places</a><a href="#diwali">Happy Diwali</a></div>
+    <div><h4>Project</h4><a href="https://github.com/rroopha-25/story-of-light" target="_blank" rel="noopener">View on GitHub</a><a href="https://github.com/rroopha-25/story-of-light/issues" target="_blank" rel="noopener">Share feedback</a><a href="privacy.html">Privacy policy</a></div>
+    <div><h4>Notes</h4><p>Paintings in the style of Odisha Pattachitra.</p><p>Places are described as local tradition holds them.</p></div>
+  </div>
+  <div class="fbar2"><span>&copy; 2026 The Story of Light</span><span class="by">Designed and built with <span aria-label="love">&#10084;</span> by <b>Roopha</b></span></div>
+</footer>
 <div id="zoom" role="dialog" aria-modal="true" aria-label="Painting" hidden><button id="zclose" aria-label="Close">&#10005;</button><img id="zimg" alt=""></div>
 <script>
 const $=id=>document.getElementById(id);
@@ -299,6 +316,11 @@ $('share').onclick=async()=>{const url=location.href,text=(NAME?'Dear '+NAME+', 
   try{await navigator.clipboard.writeText(url);$('copied').textContent='Link copied. Paste it anywhere to share.'}catch(e){$('copied').textContent='Copy this page\'s address to share it.'}};
 $('again').onclick=()=>scrollTo({top:0,behavior:'smooth'});
 if(NAME){document.querySelectorAll('img[loading=lazy]').forEach(i=>i.loading='eager');addEventListener('load',()=>fin.scrollIntoView());setTimeout(()=>fin.scrollIntoView(),300)}
+</script>
+<script>
+/* Analytics: set your GoatCounter code (e.g. "storyoflight") to switch on cookie-free visitor stats */
+const GOATCOUNTER_CODE="";
+if(GOATCOUNTER_CODE){const s=document.createElement('script');s.async=true;s.dataset.goatcounter='https://'+GOATCOUNTER_CODE+'.goatcounter.com/count';s.src='https://gc.zgo.at/count.js';document.body.appendChild(s)}
 </script>
 </body>
 </html>
