@@ -285,12 +285,17 @@ $('mus').onclick=()=>setMusic(!on);
 const SS=window.speechSynthesis;let VOICE=null;
 function pickV(){if(!SS)return;const v=SS.getVoices().filter(a=>/^en/i.test(a.lang));const sc=a=>(/natural|neural/i.test(a.name)?50:0)+(/premium|enhanced|siri/i.test(a.name)?40:0)+(/google/i.test(a.name)?25:0)+(/online/i.test(a.name)?15:0)+(/en-IN/i.test(a.lang)?12:/en-GB/i.test(a.lang)?8:0)-(/compact|espeak|fred|albert|zarvox|bells|whisper/i.test(a.name)?60:0);v.sort((a,b)=>sc(b)-sc(a));VOICE=v[0]||null}
 if(SS){pickV();SS.onvoiceschanged=pickV}
-let AUD=null,curBtn=null;
-function stopAll(){if(AUD){AUD.pause();AUD=null}if(SS)SS.cancel();if(curBtn){curBtn.classList.remove('playing');curBtn.querySelector('span').textContent='Listen'}curBtn=null;if(music)music.gain.setTargetAtTime(.5,AC.currentTime,.4)}
-function done(){stopAll()}
+let AUD=null,curBtn=null,REC=null,queue=[],keep=null;
+/* check once whether recorded narration exists, so a tap can start sound immediately */
+fetch('narration-01.mp3',{method:'HEAD'}).then(r=>{REC=r.ok&&/audio|mpeg|octet/.test(r.headers.get('content-type')||'')}).catch(()=>{REC=false});
+function resetBtn(){if(curBtn){curBtn.classList.remove('playing');curBtn.querySelector('span').textContent='Listen'}curBtn=null;clearInterval(keep);if(music)music.gain.setTargetAtTime(.5,AC.currentTime,.4)}
+function stopAll(){queue=[];if(AUD){AUD.pause();AUD=null}if(SS&&(SS.speaking||SS.pending))SS.cancel();resetBtn()}
+function nextChunk(){if(!queue.length){resetBtn();return}const u=new SpeechSynthesisUtterance(queue.shift());if(VOICE){u.voice=VOICE;u.lang=VOICE.lang}else u.lang='en-GB';u.rate=.92;u.pitch=1;u.onend=nextChunk;u.onerror=e=>{if(e.error!=='interrupted'&&e.error!=='canceled')nextChunk()};SS.speak(u)}
+function speakTTS(text){if(!SS){resetBtn();return}if(!VOICE)pickV();queue=text.match(/[^.!?”]+[.!?”]*\s*/g)||[text];
+  if(SS.paused)SS.resume();nextChunk();clearInterval(keep);keep=setInterval(()=>{if(SS.speaking&&!SS.paused){SS.pause();SS.resume()}},10000)}
 function speak(text,btn,file){stopAll();curBtn=btn;btn.classList.add('playing');btn.querySelector('span').textContent='Stop';if(music)music.gain.setTargetAtTime(.15,AC.currentTime,.3);
-  const tts=()=>{if(!SS){done();return}const u=new SpeechSynthesisUtterance(text);if(VOICE)u.voice=VOICE;u.rate=.9;u.onend=done;u.onerror=done;SS.speak(u)};
-  const a=new Audio(file);AUD=a;a.onended=done;a.onerror=()=>{if(AUD===a){AUD=null;tts()}};a.play().catch(()=>{if(AUD===a){AUD=null;tts()}})}
+  if(REC){const a=new Audio(file);AUD=a;a.onended=resetBtn;a.onerror=()=>{if(AUD===a){AUD=null;resetBtn()}};a.play().catch(()=>{AUD=null;speakTTS(text)});return}
+  speakTTS(text)}
 document.querySelectorAll('.chap').forEach((c,i)=>{const b=c.querySelector('.listen');b.onclick=()=>{if(b.classList.contains('playing')){stopAll();return}speak(c.dataset.vo,b,'narration-'+String(i+1).padStart(2,'0')+'.mp3')}});
 /* finale */
 const fin=$('diwali'),lant=$('lant');
